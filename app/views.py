@@ -1,11 +1,24 @@
-from flask import render_template
+from flask import Blueprint, render_template, request, flash
 from app import app
+from flask_wtf import Form
+from wtforms import StringField, validators
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
 	#return "Hello, Flask!"
-	pass_param= {'var1':'A'}
-	return render_template('index.html',
-							title='Home',
-							param=pass_param)
+	form = MyForm(request.form)
+	print form.errors
+	print form.validate_on_submit()
+	if request.method == 'POST' and form.validate():
+		print form.username.data
+
+		print "------>>>>"
+		return "OK"
+	return render_template('form.html', form=form)
+
+
+
+class MyForm(Form):
+	username = StringField('username', [validators.Length(min=2, max=6)])
+
